@@ -6,23 +6,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UsuarioService {
-  private url = 'https://api-llanteria-pos.onrender.com/api/usuarios';
+  private apiUrl = 'https://api-llanteria-pos.onrender.com/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
   getUsuarios(): Observable<any> {
-    return this.http.get(this.url);
+    return this.http.get(this.apiUrl);
   }
 
   crearUsuario(usuario: any): Observable<any> {
-    return this.http.post(this.url, usuario);
+    return this.http.post(this.apiUrl, usuario);
   }
 
   actualizarUsuario(id: string, usuario: any): Observable<any> {
-    return this.http.put(this.url + id, usuario);
+    return this.http.put(`${this.apiUrl}/${id}`, usuario)
   }
 
   eliminarUsuario(id: string): Observable<any> {
-    return this.http.delete(this.url + id);
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
