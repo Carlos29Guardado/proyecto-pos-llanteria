@@ -1,0 +1,27 @@
+<!-- 1. El Menú Lateral (Se queda igual) -->
+<div class="menu-lateral" [class.abierto]="menuAbierto">
+  <div class="menu-header">
+    <h3>Menú Principal</h3>
+    <button class="btn-cerrar" (click)="alternarMenu()">×</button>
+  </div>
+
+  <nav class="menu-links">
+    <a routerLink="/inventario" (click)="alternarMenu()">📦 Inventario</a>
+    <a routerLink="/usuarios" (click)="alternarMenu()">👥 Usuarios</a>
+  </nav>
+</div>
+
+<!-- 2. EL CONTENEDOR QUE SERÁ EMPUJADO -->
+<div class="contenido-principal" [class.desplazado]="menuAbierto">
+
+  <!-- La barra superior ahora se mueve junto con el contenido -->
+  <div class="navbar-top">
+    <button class="btn-hamburguesa" (click)="alternarMenu()">☰</button>
+  </div>
+
+  <!-- Aquí va tu componente de inventario -->
+  <div class="area-trabajo" style="padding: 20px;">
+    <router-outlet></router-outlet>
+
+  </div>
+</div>

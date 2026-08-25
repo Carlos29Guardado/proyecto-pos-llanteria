@@ -1,0 +1,92 @@
+
+.navbar-top {
+  background-color: #212529; /* Color oscuro */
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn-hamburguesa {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+/* Menú Lateral */
+.menu-lateral {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+  
+  /* EL TRUCO: Lo escondemos fuera de la pantalla hacia la izquierda */
+  transform: translateX(-100%); 
+  transition: transform 0.3s ease-in-out; /* Animación suave */
+  z-index: 1000; /* Para que quede encima de la tabla */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cuando la variable de Angular le pone la clase .abierto, lo traemos a la posición 0 */
+.menu-lateral.abierto {
+  transform: translateX(0);
+}
+
+/* Estilos de los links dentro del menú */
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #ef4444; /* Rojo */
+}
+
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+.menu-links a {
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+}
+
+.menu-links a:hover {
+  background-color: #e9ecef;
+}
+
+/* Configuración del contenedor principal */
+.contenido-principal {
+  /* Hacemos que la animación dure los mismos 0.3s que el menú */
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; 
+  margin-left: 0;
+  width: 100%;
+}
+
+/* 🚀 LA ANIMACIÓN: Cuando el menú está abierto, empujamos el contenido */
+.contenido-principal.desplazado {
+  margin-left: 260px; /* Los mismos 260px que mide tu menú lateral */
+  width: calc(100% - 260px); /* Ajustamos el ancho para que la tabla no se salga de la pantalla */
+}

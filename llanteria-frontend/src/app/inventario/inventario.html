@@ -1,0 +1,62 @@
+<div class="inventario-container" style="max-width: 900px; margin: 0 auto; font-family: sans-serif;">
+  <h2 style="text-align: center; color: #333;">Control de Inventario</h2>
+
+  <!-- 1. SECCIÓN DE REGISTRO (EL FORMULARIO) -->
+  <div style="background: #f4f4f4; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h3 style="margin-top: 0; color: #0056b3;">Ingresar Nuevo Producto</h3>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="text" placeholder="Código (Ej. LL003)" [(ngModel)]="nuevoCodigo" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+      <input type="text" placeholder="Descripción" [(ngModel)]="nuevaDesc" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 2;">
+      <input type="text" placeholder="Marca" [(ngModel)]="nuevaMarca" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+      <input type="text" placeholder="Stock" [(ngModel)]="nuevoStock" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+      <input type="number" placeholder="Precio ($)" [(ngModel)]="nuevoPrecio" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+      
+      <button (click)="agregarProducto()" style="background: #0056b3; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        {{ idEditando ? 'Actualizar' : 'Agregar' }}
+      </button>
+      
+      <!-- Botón de cancelar que solo aparece si estamos editando -->
+      <button type="button" *ngIf="idEditando" (click)="limpiarFormulario()" style="background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+  
+  <!-- 2. SECCIÓN DE LA TABLA -->
+  <table class="tabla-llantas" style="width: 100%; text-align: left; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background: white;">
+    <thead style="background-color: #333; color: white;">
+      <tr>
+        <th style="padding: 12px;">Código</th>
+        <th style="padding: 12px;">Descripción / Medida</th>
+        <th style="padding: 12px;">Marca</th>
+        <th style="padding: 12px;">Stock</th>
+        <th style="padding: 12px;">Precio ($)</th>
+        <th style="padding: 12px;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Bucle dinámico -->
+      <tr *ngFor="let p of productos" style="border-bottom: 1px solid #eee;">
+        <td style="padding: 12px;">{{ p.codigo }}</td>
+        <td style="padding: 12px;">{{ p.descripcion }}</td>
+        <td style="padding: 12px;">{{ p.marca }}</td>
+        <td style="padding: 12px;">
+           <span [ngStyle]="{'color': p.stock === 'N/A' ? 'gray' : 'black'}">{{ p.stock }}</span>
+        </td>
+        <td style="padding: 12px;">${{ p.precio | number:'1.2-2' }}</td>
+        <td>
+            <button (click)="eliminarProducto(p._id!)" style="background-color: #ff4d4d; margin-right: 10px; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+              Eliminar
+            </button>
+
+                  <button (click)="cargarDatosEdicion(p)"
+                    style="background-color: #ffc107; color: black; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;">
+                    Editar
+                  </button>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
