@@ -40,9 +40,15 @@ exports.actualizarUsuario = async (req, res) => {
 exports.eliminarUsuario = async (req, res) => {
     try {
         const idUsuario = await Usuario.findByIdAndDelete(req.params.id);
+        
+        // AGREGAR ESTA VALIDACIÓN: Si es null, mandamos error 404
+        if (!idUsuario) {
+            return res.status(404).json({mensaje: 'No se encontró el usuario en la BD'});
+        }
+
         res.status(200).json({mensaje: 'Usuario borrado con éxito'});
     } catch (error) {
         console.error('Error al borrar el usuario', error);
-        res.status(500).json({mensaje: 'Error al borrar'})
+        res.status(500).json({mensaje: 'Error al borrar'});
     }
 }
