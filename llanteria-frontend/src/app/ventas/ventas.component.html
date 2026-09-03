@@ -1,0 +1,95 @@
+<div style="padding: 5px 20px 20px 20px; max-width: 1100px; margin: 0 auto; font-family: 'Segoe UI', Arial, sans-serif;">
+  <h2 style="text-align: center; margin-top: 10px; margin-bottom: 20px; color: #333;">Caja Registradora y Ventas</h2>
+
+  <!-- 1. Tarjeta del Punto de Venta (Formulario y Carrito) -->
+  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
+    
+    <h4 style="color: #0056b3; margin-top: 0; margin-bottom: 15px;">Nueva Factura</h4>
+    
+    <!-- Fila 1: Datos del Cliente (CON MENÚ DESPLEGABLE) -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
+      <select name="cliente" [(ngModel)]="cliente" required style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
+        <option value="" disabled selected>-- Selecciona un Cliente --</option>
+        <option *ngFor="let c of listaClientes" [value]="c._id">
+          {{ c.nombre }} {{ c.apellido || '' }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Fila 2: Ingreso de Llantas (CON MENÚ DESPLEGABLE) -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px dashed #ccc; margin-bottom: 15px;">
+      
+      <select name="productoTemp" [(ngModel)]="productoIdTemp" style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
+        <option value="" disabled selected>-- Selecciona una Llanta --</option>
+        <option *ngFor="let p of listaProductos" [value]="p._id">
+          {{ p.marca }} {{ p.modelo }} - (Stock: {{ p.stock }})
+        </option>
+      </select>
+      
+      <input type="number" name="cantidadTemp" [(ngModel)]="cantidadTemp" min="1" placeholder="Cantidad" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+      
+      <button type="button" (click)="agregarAlCarrito()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        Añadir al Carrito
+      </button>
+    </div>
+
+    <!-- Fila 3: Detalle del Carrito Visual -->
+    <div *ngIf="detalles.length > 0" style="margin-bottom: 20px;">
+      <h5 style="margin: 0 0 10px 0; color: #333;">Detalle de la Orden:</h5>
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li *ngFor="let item of detalles; let i = index" style="display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px; margin-bottom: 5px; border-radius: 4px;">
+          <!-- Aquí ahora mostramos item.nombre en lugar de item.producto -->
+          <span><strong>Llanta:</strong> {{ item.nombre }} | <strong>Cant:</strong> {{ item.cantidad }}</span>
+          <button type="button" (click)="eliminarDelCarrito(i)" style="color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">
+            Quitar
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Fila 4: Botón de Cobro Final -->
+    <button type="button" (click)="procesarVenta()" [disabled]="detalles.length === 0 || !cliente" 
+            [ngStyle]="{'opacity': (detalles.length === 0 || !cliente) ? '0.6' : '1'}"
+            style="background-color: #198754; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;">
+      Procesar Cobro y Descontar Stock
+    </button>
+  </div>
+
+  <!-- 2. Tabla del Historial de Ventas -->
+  <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+    <thead>
+      <tr style="background-color: #212529; color: white; text-align: left;">
+        <th style="padding: 15px;">ID Venta</th>
+        <th style="padding: 15px;">Cliente</th>
+        <th style="padding: 15px;">Total</th>
+        <th style="padding: 15px; text-align: center;">Estado</th>
+        <th style="padding: 15px; text-align: center;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let v of listaVentas" style="border-bottom: 1px solid #eee;">
+        
+        <td style="padding: 15px; font-size: 13px; color: #666;">{{ v._id }}</td>
+        
+        <td style="padding: 15px;">
+          {{ v.cliente?.nombre ? v.cliente.nombre + ' ' + (v.cliente.apellido || '') : v.cliente }}
+        </td>
+        
+        <td style="padding: 15px; font-weight: bold;">${{ v.total_venta }}</td>
+        
+        <td style="padding: 15px; text-align: center;">
+          <span [ngStyle]="{'background-color': v.estado === 'Anulada' ? '#dc3545' : '#0d6efd', 'color': 'white', 'padding': '5px 10px', 'border-radius': '15px', 'font-size': '12px', 'font-weight': 'bold'}">
+            {{ v.estado || 'Completada' }}
+          </span>
+        </td>
+        
+        <td style="padding: 15px; display: flex; justify-content: center;">
+          <button *ngIf="v.estado !== 'Anulada'" (click)="anularVenta(v._id)" title="Anular Factura" style="background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            Anular
+          </button>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router'
-import { Inventario } from './inventario/inventario'; 
+import { InventarioComponent } from './inventario/inventario.component'; 
 
 @Component({
   selector: 'app-root',

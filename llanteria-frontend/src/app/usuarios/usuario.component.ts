@@ -2,14 +2,14 @@ import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { UsuarioService } from '../services/usuario';
+import { UsuarioService } from '../services/usuario.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
   selector: 'app-usuarios',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
-  templateUrl: './usuarios.html',
-  styleUrls: ['./usuarios.css']
+  templateUrl: './usuarios.component.html',
+  styleUrls: ['./usuarios.component.css']
 })
 export class Usuarios implements OnInit {
   // Arreglo para almacenar la lista de usuarios que viene de la base de datos
@@ -39,7 +39,7 @@ export class Usuarios implements OnInit {
   //MÉTODO PARA OBTENER LOS USUARIOS
   obtenerUsuarios() {
     this.usuarioService.getUsuarios().subscribe({
-      next: (res: any) => { 
+      next: (res: any) => {
         this.ngZone.run(() => {
           this.listaUsuarios = res.usuarios || res; 
           this.cdr.detectChanges();

@@ -85,7 +85,7 @@
   width: 100%;
 }
 
-/* 🚀 LA ANIMACIÓN: Cuando el menú está abierto, empujamos el contenido */
+/* LA ANIMACIÓN: Cuando el menú está abierto, empujamos el contenido */
 .contenido-principal.desplazado {
   margin-left: 260px; /* Los mismos 260px que mide tu menú lateral */
   width: calc(100% - 260px); /* Ajustamos el ancho para que la tabla no se salga de la pantalla */

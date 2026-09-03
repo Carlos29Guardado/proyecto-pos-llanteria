@@ -12,20 +12,20 @@ export class ProductoService {
   constructor(private http: HttpClient) { }
 
 
-  guardarLlanta(producto: any): Observable<any> {
+  crearProducto(producto: any): Observable<any> {
     return this.http.post(this.apiUrl, producto);
   }
 
-  obtenerLlanta(): Observable<any> {
+  obtenerProducto(): Observable<any> {
     return this.http.get(this.apiUrl)
 
   }
-  actualizarLlanta(id: string, producto: any): Observable<any>{
+  actualizarProducto(id: string, producto: any): Observable<any>{
     return this.http.put(`${this.apiUrl}/${id}`, producto)
   }
 
 
-  eliminarLlanta(id: String): Observable<any> {
+  eliminarProducto(id: String): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

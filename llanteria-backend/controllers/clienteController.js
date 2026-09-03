@@ -5,10 +5,9 @@ exports.crearCliente = async (req, res) =>{
     try {
         const nuevoCliente = new Cliente(req.body);
         await nuevoCliente.save();
-        res.status(201).json({mensaje: 'Cliente guardado con éxito', Cliente: nuevoProducto});
+        res.status(201).json({mensaje: 'Cliente guardado con éxito', Cliente: nuevoCliente});
     } catch (error) {
         console.error("Error real:", error);
-        
         res.status(500).json({mensaje: 'Error al guardar el cliente', error: error.message})
     }
 };
@@ -27,7 +26,7 @@ exports.obtenerCliente = async (req, res)=>{
 exports.eliminarCliente = async (req, res) => {
     try {
         const idCliente = await Cliente.findByIdAndDelete(req.params.id);
-        res.status(200).json({mensaje: 'Cliente borrado con exito', idProducto});
+        res.status(200).json({mensaje: 'Cliente borrado con exito', idCliente});
     } catch (error) {
         console.error('Error al borrar el cliente', error);
         res.status(500).json({mensaje:'Error al borrar'});
