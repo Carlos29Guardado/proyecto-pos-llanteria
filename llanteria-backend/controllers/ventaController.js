@@ -69,6 +69,9 @@ exports.obtenerVentas = async (req, res) => {
     }
 };
 exports.anularVenta = async (req, res) => {
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         const venta = await Venta.findById(req.params.id).session(session);
         if (!venta) {
@@ -77,9 +80,7 @@ exports.anularVenta = async (req, res) => {
         if (!venta.estado === 'Anulada') {
             throw new Error("Esta venta ya fue anulada previamente");
         }
-
         //Le devolvemos el stock de cada producto sumando la cantidad
-
         for (let item of venta.detalles) {
             await Producto.findByIdAndUpdate(
                 item.producto,
@@ -90,13 +91,12 @@ exports.anularVenta = async (req, res) => {
 
         venta.estado = 'Anulada';
         await venta.save({ session: session })
-
         await session.commitTransaction();
         res.status(200).json({ msg: 'Venta anulada y stock devuelto exitosamente', venta });
     } catch (error) {
         await session.abortTransaction();
         console.log("Transacción abortada:", error.message);
-        res.status(400).json({ mensaje: error.message });
+        res.status(404).json({ mensaje: error.message });
     } finally {
         session.endSession();
     }
