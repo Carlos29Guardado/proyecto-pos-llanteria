@@ -20,7 +20,7 @@
     <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px dashed #ccc; margin-bottom: 15px;">
       
       <select name="productoTemp" [(ngModel)]="productoIdTemp" style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
-        <option value="" disabled selected>-- Selecciona una Llanta --</option>
+        <option value="" disabled selected>-- Selecciona un producto --</option>
         <option *ngFor="let p of listaProductos" [value]="p._id">
           {{ p.marca }} {{ p.modelo }} - (Stock: {{ p.stock }})
         </option>
@@ -59,8 +59,8 @@
   <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
     <thead>
       <tr style="background-color: #212529; color: white; text-align: left;">
-        <th style="padding: 15px;">ID Venta</th>
         <th style="padding: 15px;">Cliente</th>
+        <th style="padding: 15px;">Productos Vendidos</th>
         <th style="padding: 15px;">Total</th>
         <th style="padding: 15px; text-align: center;">Estado</th>
         <th style="padding: 15px; text-align: center;">Acciones</th>
@@ -69,20 +69,33 @@
     <tbody>
       <tr *ngFor="let v of listaVentas" style="border-bottom: 1px solid #eee;">
         
-        <td style="padding: 15px; font-size: 13px; color: #666;">{{ v._id }}</td>
-        
+        <!-- 1. Cliente -->
         <td style="padding: 15px;">
           {{ v.cliente?.nombre ? v.cliente.nombre + ' ' + (v.cliente.apellido || '') : v.cliente }}
         </td>
         
+        <!-- 2. Productos Vendidos (Lista interna) -->
+        <td style="padding: 15px; font-size: 13px; color: #444;">
+          <ul style="margin: 0; padding-left: 15px; list-style-type: none;">
+            <!-- OJO: Verifica si tu arreglo se llama 'productos' o 'detalles', y ajusta 'item.llanta.nombre' según tu backend -->
+            <li *ngFor="let item of v.productos" style="margin-bottom: 4px;">
+              <strong>{{ item.cantidad }}x</strong> {{ item.llanta?.nombre || item.producto?.nombre }} 
+              <span *ngIf="item.llanta?.medida">- {{ item.llanta?.medida }}</span>
+            </li>
+          </ul>
+        </td>
+        
+        <!-- 3. Total -->
         <td style="padding: 15px; font-weight: bold;">${{ v.total_venta }}</td>
         
+        <!-- 4. Estado -->
         <td style="padding: 15px; text-align: center;">
           <span [ngStyle]="{'background-color': v.estado === 'Anulada' ? '#dc3545' : '#0d6efd', 'color': 'white', 'padding': '5px 10px', 'border-radius': '15px', 'font-size': '12px', 'font-weight': 'bold'}">
             {{ v.estado || 'Completada' }}
           </span>
         </td>
         
+        <!-- 5. Acciones -->
         <td style="padding: 15px; display: flex; justify-content: center;">
           <button *ngIf="v.estado !== 'Anulada'" (click)="anularVenta(v._id)" title="Anular Factura" style="background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
             Anular
