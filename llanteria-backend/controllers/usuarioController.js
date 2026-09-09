@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 
 //Funcion para el login
-const loginUsuario = async (req, res) => {
+exports.loginUsuario = async (req, res) => {
     try {
         const { correo, password } = req.body;
 
