@@ -1,8 +1,58 @@
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+
+//Funcion para el login
+const loginUsuario = async (req, res) => {
+    try {
+        const { correo, password } = req.body;
+
+        const usuario = await Usuario.findOne({correo});
+        if(!usuario){
+            return res.status(404).json({mensaje:'Usuario no encontrado'});
+        }
+
+        const passwordValido = await bcrypt.compare(password, usuario.password);
+        if(!passwordValido){
+            return res.status(401).json({mensaje: 'Contraseña incorrecta'})
+        }
+
+        const token = jwt.sign(
+            { id: usuario._id, rol: usuario.rol },
+            'LLANTERIA_SECRETO_SEGURO',
+            { expiresIn: '8h'}
+        );
+
+        res.status(200).json({
+            mensaje: 'Login exitoso',
+            token: token,
+            usuario: {
+                id: usuario._id,
+                nombre: usuario.nombre,
+                rol: usuario.rol
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ mensaje: 'Hubo un error en el servidor' });
+    }
+}
 
 exports.crearUsuario = async (req, res) => {
     try {
-        const nuevoUsuario = new Usuario(req.body);
+        const { nombre, correo, password, rol } = req.body;
+
+        const salt = await bcrypt.genSalt(10);
+
+        const passwordEncriptado = await bcrypt.hash(password, salt);  
+
+        const nuevoUsuario = new Usuario({
+            nombre,
+            correo,
+            password: passwordEncriptado,
+            rol
+        });
         await nuevoUsuario.save();
         res.status(201).json({mensaje: 'Usuario creado correctamente'});
     } catch (error) {
