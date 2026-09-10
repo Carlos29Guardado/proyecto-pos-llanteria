@@ -17,7 +17,7 @@ app.use('/api/productos', require('./routes/productosRoutes'));
 app.use('/api/usuarios', require('./routes/usuariosRoutes'));
 app.use('/api/clientes', require('./routes/clientesRoutes'));
 app.use('/api/ventas', require('./routes/ventasRoutes'));
-app.use('/api/login', require('./routes/usuariosRoutes'));
+
 app.get('/', (req, res) => res.send('API funcionando'));
 
 app.listen(PORT, ()=>{

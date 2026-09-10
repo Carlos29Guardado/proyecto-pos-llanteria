@@ -1,3 +1,10 @@
+@if (router.url === '/login'){
+
+<router-outlet></router-outlet>
+}
+@else{
+
+
 <!-- 1. El Menú Lateral (Se queda igual) -->
 <div class="menu-lateral" [class.abierto]="menuAbierto">
   <div class="menu-header">
@@ -27,3 +34,4 @@
 
   </div>
 </div>
+}

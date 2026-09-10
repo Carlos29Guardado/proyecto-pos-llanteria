@@ -1,0 +1,23 @@
+<div class="login-container">
+  <h2>Acceso al Sistema</h2>
+  
+  <!-- Conectamos el formulario de HTML con el FormGroup de TypeScript -->
+  <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+    
+    <div>
+      <label>Correo Electrónico:</label>
+      <input type="email" formControlName="correo" placeholder="ejemplo@correo.com" value="cmgd">
+    </div>
+
+    <div>
+      <label>Contraseña:</label>
+      <input type="password" formControlName="password" placeholder="******">
+    </div>
+
+    <!-- El botón se desactiva solito si el formulario no es válido -->
+    <button type="submit" [disabled]="loginForm.invalid">
+      Entrar
+    </button>
+    
+  </form>
+</div>

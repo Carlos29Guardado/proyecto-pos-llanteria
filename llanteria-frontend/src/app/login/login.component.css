@@ -1,0 +1,78 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e9ecef;
+    font-family: 'Segoe UI';
+}
+.login-container {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Sombra suave para el efecto flotante */
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+h2 {
+  text-align: center;
+  color: #212529;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: 600;
+}
+form div {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #ced4da;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #495057;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Efecto visual cuando haces clic para escribir */
+input:focus {
+  border-color: #0d6efd;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Color más oscuro al pasar el mouse (si el botón está activo) */
+button:hover:not(:disabled) {
+  background-color: #0b5ed7;
+}
+
+/* Estilo para cuando el formulario es inválido y el botón está desactivado */
+button:disabled {
+  background-color: #a5c8fd;
+  cursor: not-allowed;
+}

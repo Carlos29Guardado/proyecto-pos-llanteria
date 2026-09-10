@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router'
-import { InventarioComponent } from './inventario/inventario.component'; 
+import { RouterLink, RouterOutlet, Router } from '@angular/router'
+
 
 @Component({
   selector: 'app-root',
@@ -12,6 +12,8 @@ import { InventarioComponent } from './inventario/inventario.component';
 export class AppComponent {
   //Variable bandera para coontrolar el menú
   menuAbierto: boolean = false;
+
+  constructor(public router: Router){}
 
   title = 'llanteria-pos';
 
