@@ -20,4 +20,11 @@ export class AppComponent {
   alternarMenu(){
     this.menuAbierto = !this.menuAbierto;
   }
+
+  cerrarSesion(){
+    localStorage.removeItem('token');
+
+    this.router.navigate(['/login']);
+  }
+
 }

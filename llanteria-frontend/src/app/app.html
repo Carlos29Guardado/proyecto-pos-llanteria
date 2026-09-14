@@ -6,27 +6,24 @@
 
 
 <!-- 1. El Menú Lateral (Se queda igual) -->
+ <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <div class="menu-lateral" [class.abierto]="menuAbierto">
   <div class="menu-header">
     <h3>Menú Principal</h3>
-    <button class="btn-cerrar" (click)="alternarMenu()">×</button>
+    <!--<button class="btn-cerrar" (click)="alternarMenu()">×</button> -->
   </div>
 
   <nav class="menu-links">
-    <a routerLink="/inventario" (click)="alternarMenu()">📦 Inventario</a>
-    <a routerLink="/usuarios" (click)="alternarMenu()">👥 Usuarios</a>
-    <a routerLink="/clientes" (click)="alternarMenu()">🤝 Clientes</a>
-    <a routerLink="/ventas" (click)="alternarMenu()">💰 Ventas</a>
-  </nav>
+  <a routerLink="/inventario"><i class='bx bx-package'></i> Inventario</a>
+  <a routerLink="/usuarios"><i class='bx bx-group'></i> Usuarios</a>
+  <a routerLink="/clientes"><i class='bx bx-id-card'></i> Clientes</a>
+  <a routerLink="/ventas"><i class='bx bx-line-chart'></i> Ventas</a>
+</nav>
+   <a (click)="cerrarSesion()" class="btn-logout"><i class='bx bx-log-out'></i> Cerrar Sesión</a>
 </div>
 
 <!-- 2. EL CONTENEDOR QUE SERÁ EMPUJADO -->
 <div class="contenido-principal" [class.desplazado]="menuAbierto">
-
-  <!-- La barra superior ahora se mueve junto con el contenido -->
-  <div class="navbar-top">
-    <button class="btn-hamburguesa" (click)="alternarMenu()">☰</button>
-  </div>
 
   <!-- Aquí va tu componente de inventario -->
   <div class="area-trabajo" style="padding: 20px;">
