@@ -15,4 +15,7 @@ export class LoginService {
     iniciarSesion(login: any): Observable<any> {
         return this.http.post(this.apiUrl, login);
     }
+    loginGoogle(idToken: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/auth/google`, { token: idToken });
+    }
 }

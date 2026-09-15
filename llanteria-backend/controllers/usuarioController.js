@@ -1,6 +1,9 @@
 const Usuario = require('../models/Usuario');
+const {OAuth2Client } = require('google-auth-library');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 //Funcion para el login
@@ -36,6 +39,61 @@ exports.loginUsuario = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ mensaje: 'Hubo un error en el servidor' });
+    }
+}
+
+//Funcion para login con google
+exports.loginGoogle = async (req, res) => {
+    try {
+        const { token: googleToken } = req.body;
+
+        const ticket = await client.verifyIdToken({
+            idToken: googleToken,
+            audience: process.env.GOOGLE_CLIENT_ID
+        })
+
+        const payload = ticket.getPayload();
+        const correo = payload.email;
+
+        //Buscamos el usuario en DB
+        let usuario = await Usuario.findOne({correo});
+        //Si no existe, se registra
+        if(!usuario){
+            console.log('Usuario nuevo detectado');
+
+            const salt = await bcrypt.genSalt(10);//Creamos una contraseña ficticia
+            const passwordDummy = await bcrypt.hash('GoogleLogin123', salt);
+
+            usuario = new Usuario({
+                nombre: payload.name,
+                correo: correo,
+                password: passwordDummy,
+                rol: 'CAJERO'
+            });
+
+            await usuario.save(); 
+        }
+
+        const token = jwt.sign(
+            {
+                id: usuario._id, rol: usuario.rol
+            }, 'LLANTERIA_SECRETO_SEGURO',
+            {
+                expiresIn: '8h'
+            }
+        )
+        res.status(200).json({
+            mensaje: 'Login con Google exitoso',
+            token: token,
+            usuario: {
+                id: usuario._id,
+                nombre: usuario.nombre,
+                rol: usuario.rol
+            }
+        });
+    } catch (error) {
+        console.log('Error en login de Google:', error);
+        res.status(401).json({ mensaje: 'Token de Google inválido o expirado' });
     }
 }
 

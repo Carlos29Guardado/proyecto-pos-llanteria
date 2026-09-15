@@ -76,3 +76,26 @@ button:disabled {
   background-color: #a5c8fd;
   cursor: not-allowed;
 }
+.input-password-container {
+  position: relative;
+  width: 100%; /* Ajusta al ancho que ya usas */
+}
+
+.input-password-container input {
+  width: 100%;
+  padding-right: 40px; /* Evita que el texto de la contraseña pise el icono */
+}
+
+.input-password-container i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #6c757d; /* Gris para que no resalte demasiado */
+}
+
+.input-password-container i:hover {
+  color: #333; /* Se oscurece al pasar el mouse */
+}
