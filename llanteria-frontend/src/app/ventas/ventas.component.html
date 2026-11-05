@@ -1,113 +1,106 @@
-<div style="padding: 5px 20px 20px 20px; max-width: 1100px; margin: 0 auto; font-family: 'Segoe UI', Arial, sans-serif;">
-  <h2 style="text-align: center; margin-top: 10px; margin-bottom: 20px; color: #333;">Caja Registradora y Ventas</h2>
+<div class="pagina">
+  <h2 class="titulo">Caja Registradora y Ventas</h2>
 
-  <!-- 1. Tarjeta del Punto de Venta (Formulario y Carrito) -->
-  <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 25px;">
-    
-    <h4 style="color: #0056b3; margin-top: 0; margin-bottom: 15px;">Nueva Factura</h4>
-    
-    <!-- Fila 1: Datos del Cliente (CON MENÚ DESPLEGABLE) -->
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
-      <select name="cliente" [(ngModel)]="cliente" required style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
-        <option value="" disabled selected>-- Selecciona un Cliente --</option>
-        <option *ngFor="let c of listaClientes" [value]="c._id">
-          {{ c.nombre }} {{ c.apellido || '' }}
-        </option>
-      </select>
-    </div>
+  <!-- 1. Punto de venta: captura a la izquierda, factura a la derecha -->
+  <div class="caja">
+    <section class="panel">
+      <h4>Nueva Factura</h4>
 
-    <!-- Fila 2: Ingreso de Llantas (CON MENÚ DESPLEGABLE) -->
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background-color: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px dashed #ccc; margin-bottom: 15px;">
-      
-      <select name="productoTemp" [(ngModel)]="productoIdTemp" style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
-        <option value="" disabled selected>-- Selecciona un producto --</option>
-        <option *ngFor="let p of listaProductos" [value]="p._id">
-          {{ p.marca }} {{ p.descripcion }} - (Stock: {{ p.stock }})
-        </option>
+      <label for="cliente">Cliente</label>
+      <select id="cliente" name="cliente" [(ngModel)]="cliente" (ngModelChange)="actualizarBorrador()">
+        <option value="" disabled>-- Selecciona un cliente --</option>
+        @for (c of listaClientes; track c._id) {
+          <option [value]="c._id">{{ c.nombre }} {{ c.apellido || '' }}</option>
+        }
       </select>
-      
-      <input type="number" name="cantidadTemp" [(ngModel)]="cantidadTemp" min="1" placeholder="Cantidad" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-      
-      <button type="button" (click)="agregarAlCarrito()" style="background-color: #ffc107; color: #212529; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-        Añadir al Carrito
+
+      <label for="producto">Producto</label>
+      <select id="producto" name="productoTemp" [(ngModel)]="productoIdTemp">
+        <option value="" disabled>-- Selecciona un producto --</option>
+        @for (p of listaProductos; track p._id) {
+          <option [value]="p._id" [disabled]="p.stock < 1">
+            {{ p.marca }} {{ p.descripcion }} · {{ p.precio | currency: 'USD' }} (Stock: {{ p.stock }})
+          </option>
+        }
+      </select>
+
+      <label for="cantidad">Cantidad</label>
+      <div class="fila">
+        <input id="cantidad" type="number" name="cantidadTemp" [(ngModel)]="cantidadTemp" min="1" step="1">
+        <button type="button" class="btn btn-agregar" (click)="agregarAlCarrito()">
+          <i class="bx bx-plus"></i> Añadir
+        </button>
+      </div>
+    </section>
+
+    <section class="vista-factura">
+      <app-factura-documento [factura]="borrador" [editable]="true" (quitar)="eliminarDelCarrito($event)" />
+      <button type="button" class="btn btn-cobrar" (click)="procesarVenta()" [disabled]="detalles.length === 0 || !cliente || procesando">
+        {{ procesando ? 'Procesando…' : 'Cobrar ' + (borrador.total | currency: 'USD') }}
       </button>
-    </div>
-
-    <!-- Fila 3: Detalle del Carrito Visual -->
-    <div *ngIf="detalles.length > 0" style="margin-bottom: 20px;">
-      <h5 style="margin: 0 0 10px 0; color: #333;">Detalle de la Orden:</h5>
-      <ul style="list-style: none; padding: 0; margin: 0;">
-        <li *ngFor="let item of detalles; let i = index" style="display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px; margin-bottom: 5px; border-radius: 4px;">
-          <!-- Aquí ahora mostramos item.nombre en lugar de item.producto -->
-          <span><strong>Llanta:</strong> {{ item.nombre }} | <strong>Cant:</strong> {{ item.cantidad }}</span>
-          <button type="button" (click)="eliminarDelCarrito(i)" style="color: white; background-color: #dc3545; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">
-            Quitar
-          </button>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Fila 4: Botón de Cobro Final -->
-    <button type="button" (click)="procesarVenta()" [disabled]="detalles.length === 0 || !cliente" 
-            [ngStyle]="{'opacity': (detalles.length === 0 || !cliente) ? '0.6' : '1'}"
-            style="background-color: #198754; color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;">
-      Procesar Cobro y Descontar Stock
-    </button>
+    </section>
   </div>
 
-  <!-- 2. Tabla del Historial de Ventas -->
-  <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
-    <thead>
-      <tr style="background-color: #212529; color: white; text-align: left;">
-        <th style="padding: 15px;">Cliente</th>
-        <th style="padding: 15px;">Producto(s)</th>
-        <th style="padding: 15px; text-align: center;">Cantidad</th>
-        <th style="padding: 15px;">Total</th>
-        <th style="padding: 15px; text-align: center;">Estado</th>
-        <th style="padding: 15px; text-align: center;">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let v of listaVentas" style="border-bottom: 1px solid #eee;">
-        
-        <!-- 1. Cliente -->
-        <td style="padding: 15px;">
-          {{ v.cliente?.nombre ? v.cliente.nombre + ' ' + (v.cliente.apellido || '') : v.cliente }}
-        </td>
-        
-        <!-- 2. Productos -->
-        <td style="padding: 15px;">
-          <div *ngFor="let item of v.detalles" style="margin-bottom: 4px;">
-            <!-- Agregamos un fallback por si el backend solo manda el ID al recargar -->
-            {{ item.producto?.marca || 'Llanta' }} - {{ item.producto?.descripcion || item.producto }}
-          </div>
-        </td>
-
-        <!-- 3. Cantidad -->
-        <td style="padding: 15px; text-align: center; font-weight: bold;">
-          <div *ngFor="let item of v.detalles" style="margin-bottom: 4px;">
-            {{ item.cantidad }}
-          </div>
-        </td>
-        
-        <!-- 4. Total -->
-        <td style="padding: 15px; font-weight: bold;">${{ v.total_venta }}</td>
-        
-        <!-- 5. Estado -->
-        <td style="padding: 15px; text-align: center;">
-          <span [ngStyle]="{'background-color': v.estado === 'Anulada' ? '#dc3545' : '#0d6efd', 'color': 'white', 'padding': '5px 10px', 'border-radius': '15px', 'font-size': '12px', 'font-weight': 'bold'}">
-            {{ v.estado || 'Completada' }}
-          </span>
-        </td>
-        
-        <!-- 6. Acciones -->
-        <td style="padding: 15px; display: flex; justify-content: center;">
-          <button *ngIf="v.estado !== 'Anulada'" (click)="anularVenta(v._id)" title="Anular Factura" style="background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-            Anular
-          </button>
-        </td>
-        
-      </tr>
-    </tbody>
-  </table>
+  <!-- 2. Historial de ventas -->
+  <h4 class="subtitulo">Historial de facturas</h4>
+  <div class="tabla-contenedor">
+    <table class="historial">
+      <thead>
+        <tr>
+          <th>Factura</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Producto(s)</th>
+          <th class="num">Total</th>
+          <th class="centro">Estado</th>
+          <th class="centro">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (v of listaVentas; track v._id) {
+          <tr [class.fila-anulada]="v.estado === 'Anulada'">
+            <td class="codigo">{{ numeroFactura(v) }}</td>
+            <td class="fecha">{{ v.createdAt | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ nombreCliente(v.cliente) }}</td>
+            <td>
+              @for (item of v.detalles; track $index) {
+                <div>{{ item.cantidad }} × {{ nombreProducto(item) }}</div>
+              }
+            </td>
+            <td class="num">{{ v.total_venta | currency: 'USD' }}</td>
+            <td class="centro">
+              <span class="estado" [class.estado-anulada]="v.estado === 'Anulada'">{{ v.estado || 'Completada' }}</span>
+            </td>
+            <td>
+              <div class="acciones">
+                <button type="button" class="btn btn-ver" (click)="verFactura(v)">Ver</button>
+                @if (v.estado !== 'Anulada') {
+                  <button type="button" class="btn btn-anular" (click)="anularVenta(v._id)" title="Anular factura">Anular</button>
+                }
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="sin-ventas" colspan="7">Todavía no hay facturas registradas</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<!-- 3. Factura del historial, lista para imprimir -->
+@if (facturaAbierta) {
+  <div class="modal" (click)="cerrarFactura()">
+    <div class="modal-contenido" role="dialog" aria-modal="true" aria-label="Detalle de la factura" (click)="$event.stopPropagation()">
+      <app-factura-documento class="factura-imprimible" [factura]="facturaAbierta" />
+      <div class="modal-acciones">
+        <button type="button" class="btn btn-secundario" (click)="cerrarFactura()">Cerrar</button>
+        <button type="button" class="btn btn-imprimir" (click)="imprimirFactura()">
+          <i class="bx bx-printer"></i> Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+}

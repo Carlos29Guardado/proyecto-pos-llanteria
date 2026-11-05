@@ -1,0 +1,69 @@
+<article class="factura" [class.anulada]="factura.estado === 'Anulada'">
+  <header class="encabezado">
+    <div>
+      <h3 class="marca">Llantería POS</h3>
+      <p class="tenue">Comprobante de venta</p>
+    </div>
+    <div class="datos">
+      <span class="etiqueta">Factura</span>
+      <strong>{{ factura.numero ? 'N.º ' + factura.numero : 'Nueva' }}</strong>
+      <span class="tenue">{{ factura.fecha | date: 'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+  </header>
+
+  <section class="cliente">
+    <span class="etiqueta">Facturar a</span>
+    @if (factura.cliente) {
+      <strong>{{ factura.cliente }}</strong>
+      @if (factura.dui) {
+        <span class="tenue">DUI {{ factura.dui }}</span>
+      }
+    } @else {
+      <span class="tenue">Sin cliente seleccionado</span>
+    }
+  </section>
+
+  <table class="lineas">
+    <thead>
+      <tr>
+        <th>Descripción</th>
+        <th class="num">Cant.</th>
+        <th class="num">P. unitario</th>
+        <th class="num">Subtotal</th>
+        @if (editable) {
+          <th><span class="oculto">Quitar</span></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (linea of factura.lineas; track $index) {
+        <tr>
+          <td>{{ linea.descripcion }}</td>
+          <td class="num">{{ linea.cantidad }}</td>
+          <td class="num">{{ linea.precio | currency: 'USD' }}</td>
+          <td class="num">{{ linea.cantidad * linea.precio | currency: 'USD' }}</td>
+          @if (editable) {
+            <td class="accion">
+              <button type="button" class="quitar" (click)="quitar.emit($index)" [attr.aria-label]="'Quitar ' + linea.descripcion" title="Quitar">
+                <i class="bx bx-x"></i>
+              </button>
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td class="vacio" [attr.colspan]="editable ? 5 : 4">Agrega productos para armar la factura</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <footer class="total">
+    <span>Total</span>
+    <strong>{{ factura.total | currency: 'USD' }}</strong>
+  </footer>
+
+  @if (factura.estado === 'Anulada') {
+    <p class="sello">Anulada</p>
+  }
+</article>

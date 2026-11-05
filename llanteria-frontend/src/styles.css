@@ -3,3 +3,22 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+/* Al imprimir solo se muestra la factura abierta */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .factura-imprimible,
+  .factura-imprimible * {
+    visibility: visible;
+  }
+
+  .factura-imprimible {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
