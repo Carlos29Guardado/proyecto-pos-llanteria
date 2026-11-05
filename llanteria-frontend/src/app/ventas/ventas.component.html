@@ -22,7 +22,7 @@
       <select name="productoTemp" [(ngModel)]="productoIdTemp" style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: white;">
         <option value="" disabled selected>-- Selecciona un producto --</option>
         <option *ngFor="let p of listaProductos" [value]="p._id">
-          {{ p.marca }} {{ p.modelo }} - (Stock: {{ p.stock }})
+          {{ p.marca }} {{ p.descripcion }} - (Stock: {{ p.stock }})
         </option>
       </select>
       

@@ -83,7 +83,7 @@ export class VentasComponent implements OnInit {
       
       // Buscamos la llanta seleccionada para sacar su nombre/marca
       const llanta = this.listaProductos.find(p => p._id === this.productoIdTemp);
-      const nombreVisual = llanta ? `${llanta.marca} ${llanta.modelo}` : 'Llanta Genérica';
+      const nombreVisual = llanta ? `${llanta.marca} ${llanta.descripcion}` : 'Llanta Genérica';
 
       this.detalles.push({
         producto: this.productoIdTemp, 

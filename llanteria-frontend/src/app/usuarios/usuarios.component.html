@@ -21,7 +21,7 @@
       <input type="email" name="correo" [(ngModel)]="usuarioActual.correo" placeholder="Correo electrónico" required
         style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
 
-      <input type="password" name="password" [(ngModel)]="usuarioActual.password" placeholder="Contraseña" required
+      <input type="password" name="password" [(ngModel)]="usuarioActual.password" [placeholder]="usuarioActual._id ? 'Nueva contraseña (opcional)' : 'Contraseña'" [required]="!usuarioActual._id"
         style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
 
       <select name="rol" [(ngModel)]="usuarioActual.rol"
@@ -82,4 +82,4 @@
       </tr>
     </tbody>
   </table>
-</div>>>
+</div>

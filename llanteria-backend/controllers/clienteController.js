@@ -1,52 +1,54 @@
-const { json } = require('express');
 const Cliente = require('../models/Cliente');
+const { manejarError, filtrarCampos } = require('../utils/errores');
 
-exports.crearCliente = async (req, res) =>{
+const CAMPOS_CLIENTE = ['nombre', 'apellido', 'telefono', 'dui'];
+
+exports.crearCliente = async (req, res) => {
     try {
-        const nuevoCliente = new Cliente(req.body);
+        const nuevoCliente = new Cliente(filtrarCampos(req.body, CAMPOS_CLIENTE));
         await nuevoCliente.save();
-        res.status(201).json({mensaje: 'Cliente guardado con éxito', Cliente: nuevoCliente});
+        res.status(201).json({ mensaje: 'Cliente guardado con éxito', cliente: nuevoCliente });
     } catch (error) {
-        console.error("Error real:", error);
-        res.status(500).json({mensaje: 'Error al guardar el cliente', error: error.message})
+        manejarError(res, error, 'Error al guardar el cliente');
     }
 };
 
-exports.obtenerCliente = async (req, res)=>{
+exports.obtenerCliente = async (req, res) => {
     try {
         const clientes = await Cliente.find();
-        res.status(200).json({mensaje: 'Clientes cargados desde la base de datos', clientes});
+        res.status(200).json({ mensaje: 'Clientes cargados desde la base de datos', clientes });
     } catch (error) {
-        console.error('Error al obtener los datos de la base de datos', error);
-        res.status(500).json({mensaje:'Error al obtener'});
-        
+        manejarError(res, error, 'Error al obtener los clientes');
     }
 };
 
 exports.eliminarCliente = async (req, res) => {
     try {
-        const idCliente = await Cliente.findByIdAndDelete(req.params.id);
-        res.status(200).json({mensaje: 'Cliente borrado con exito', idCliente});
+        const clienteEliminado = await Cliente.findByIdAndDelete(req.params.id);
+        if (!clienteEliminado) {
+            return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+        }
+        res.status(200).json({ mensaje: 'Cliente borrado con éxito', idCliente: clienteEliminado._id });
     } catch (error) {
-        console.error('Error al borrar el cliente', error);
-        res.status(500).json({mensaje:'Error al borrar'});
+        manejarError(res, error, 'Error al borrar el cliente');
     }
 }
 
-exports.actualizarCliente = async (req, res) =>{
+exports.actualizarCliente = async (req, res) => {
     try {
-        const {id} = req.params;
-        const clienteActualizado = await Cliente.findByIdAndUpdate(id, req.body, { new: true});
+        const { id } = req.params;
+        const clienteActualizado = await Cliente.findByIdAndUpdate(
+            id,
+            filtrarCampos(req.body, CAMPOS_CLIENTE),
+            { new: true, runValidators: true }
+        );
 
-        if(!clienteActualizado){
-            return res.status(404).json({mensaje: "Llanta no encontrada"});
+        if (!clienteActualizado) {
+            return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
 
-        res.status(200).json({mensaje: 'Cliente actualizado con éxito', cliente: clienteActualizado });
-
+        res.status(200).json({ mensaje: 'Cliente actualizado con éxito', cliente: clienteActualizado });
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Hubo un error al actualizar')
-        
+        manejarError(res, error, 'Hubo un error al actualizar el cliente');
     }
 }

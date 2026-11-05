@@ -6,7 +6,6 @@
 
 
 <!-- 1. El Menú Lateral (Se queda igual) -->
- <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <div class="menu-lateral" [class.abierto]="menuAbierto">
   <div class="menu-header">
     <h3>Menú Principal</h3>
@@ -15,7 +14,9 @@
 
   <nav class="menu-links">
   <a routerLink="/inventario"><i class='bx bx-package'></i> Inventario</a>
+  @if (esAdmin) {
   <a routerLink="/usuarios"><i class='bx bx-group'></i> Usuarios</a>
+  }
   <a routerLink="/clientes"><i class='bx bx-id-card'></i> Clientes</a>
   <a routerLink="/ventas"><i class='bx bx-line-chart'></i> Ventas</a>
 </nav>

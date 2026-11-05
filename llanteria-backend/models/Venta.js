@@ -26,7 +26,6 @@ const VentaSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // Dentro de tu Schema
     estado: {
         type: String,
         enum: ['Completada', 'Anulada'],

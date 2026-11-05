@@ -1,13 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { UsuarioService } from '../services/usuario.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css']
 })
@@ -53,7 +52,17 @@ export class Usuarios implements OnInit {
  guardarUsuario() {
     // Si el usuario tiene un ID, significa que estamos EDITANDO
     if (this.usuarioActual._id) {
-      this.usuarioService.actualizarUsuario(this.usuarioActual._id, this.usuarioActual).subscribe({
+      const cambios: any = {
+        nombre: this.usuarioActual.nombre,
+        correo: this.usuarioActual.correo,
+        rol: this.usuarioActual.rol
+      };
+      // La contraseña solo se envía si se escribió una nueva
+      if (this.usuarioActual.password) {
+        cambios.password = this.usuarioActual.password;
+      }
+
+      this.usuarioService.actualizarUsuario(this.usuarioActual._id, cambios).subscribe({
         next: () => {
           // Usamos el servicio global para el éxito
           this.alertasService.mostrarExito('¡Usuario actualizado!');
@@ -94,7 +103,8 @@ export class Usuarios implements OnInit {
   }
   // MÉTODO PARA LLENAR EL FORMULARIO CUANDO LE DAS A "EDITAR"
   cargarDatosEdicion(usuario: any) {
-    this.usuarioActual = { ...usuario };
+    // El backend nunca envía la contraseña; el campo queda vacío para no cambiarla
+    this.usuarioActual = { ...usuario, password: '' };
   }
 
   // MÉTODO PARA ELIMINAR 

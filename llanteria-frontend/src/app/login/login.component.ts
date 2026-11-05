@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
+import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { filter, switchMap } from 'rxjs';
 import { LoginService } from '../services/login.service';
 import { AlertasService } from '../services/alertas.service';
 
@@ -24,41 +26,46 @@ export class LoginComponent {
     private router: Router,
     private loginService: LoginService,
     private alertaService: AlertasService,
-    private authService: SocialAuthService 
+    private authService: SocialAuthService
   ) {
+    // Credenciales de la cuenta demo precargadas para quien visite el portafolio
     this.loginForm = this.fb.group({
       correo: ['demo@gmail.com', [Validators.required, Validators.email]],
       password: ['demo123', [Validators.required, Validators.minLength(6)]]
     });
 
-    // Escuchamos la respuesta de Google
-    this.authService.authState.subscribe({
-      next: (respuesta: any) => {
-        console.log('Backend autenticó a Google con éxito', respuesta);
-        const nombreUsuario = respuesta.usuario?.nombre || 'Usuario';
-        this.alertaService.mostrarExito(`Bienvenido: ${nombreUsuario}`);
-        localStorage.setItem('token', respuesta.token);
-        this.router.navigate(['/inventario']);
+    // Google nos entrega su idToken y el backend lo verifica para emitir nuestro JWT
+    this.authService.authState.pipe(
+      filter((usuarioGoogle: SocialUser | null): usuarioGoogle is SocialUser => !!usuarioGoogle?.idToken),
+      switchMap(usuarioGoogle => this.loginService.loginGoogle(usuarioGoogle.idToken)),
+      takeUntilDestroyed()
+    ).subscribe({
+      next: (respuesta) => this.entrar(respuesta),
+      error: (error) => {
+        console.error('El backend rechazó el login con Google:', error);
+        this.alertaService.mostrarError('No se pudo iniciar sesión con Google');
       }
-    })
+    });
   }
+
   iniciarSesion() {
     if (this.loginForm.invalid) {
-      alert('Por favor, llena los campos correctamente');
+      this.alertaService.mostrarError('Por favor, llena los campos correctamente');
       return;
     }
     this.loginService.iniciarSesion(this.loginForm.value).subscribe({
-      next: (respuesta) => {
-        console.log('¡Respuesta del backend exitosa', respuesta);
-        const nombreUsuario = respuesta.usuario?.nombre || 'Usuario';
-        this.alertaService.mostrarExito(`Bienvenido: ${nombreUsuario}`);
-        localStorage.setItem('token', respuesta.token);
-        this.router.navigate(['/inventario']);
-      },
+      next: (respuesta) => this.entrar(respuesta),
       error: (error) => {
         console.error('El backend rechazó el acceso:', error);
         this.alertaService.mostrarError('Credenciales incorrectas');
       }
     });
+  }
+
+  private entrar(respuesta: any) {
+    const nombreUsuario = respuesta.usuario?.nombre || 'Usuario';
+    this.alertaService.mostrarExito(`Bienvenido: ${nombreUsuario}`);
+    this.loginService.guardarSesion(respuesta);
+    this.router.navigate(['/inventario']);
   }
 }

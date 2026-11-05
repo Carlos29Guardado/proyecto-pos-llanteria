@@ -1,13 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { ClienteService } from '../services/cliente.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.css']
 })
@@ -56,7 +55,7 @@ export class ClienteComponent implements OnInit {
       this.clienteService.actualizarCliente(this.clienteActual._id, this.clienteActual).subscribe({
         next: () => {
           // Usamos el servicio global para el éxito
-          this.alertasService.mostrarExito('!Cliente actualizado!');
+          this.alertasService.mostrarExito('¡Cliente actualizado!');
           this.obtenerClientes();
           this.limpiarFormulario();
         },
@@ -80,7 +79,7 @@ export class ClienteComponent implements OnInit {
       this.clienteService.crearCliente(clienteLimpio).subscribe({
         next: () => {
           // Usamos el servicio global para el éxito
-          this.alertasService.mostrarExito('!Cliente guardado!');
+          this.alertasService.mostrarExito('¡Cliente guardado!');
           this.obtenerClientes(); // Recargamos la tabla en vivo
           this.limpiarFormulario();
         },
@@ -106,10 +105,9 @@ export class ClienteComponent implements OnInit {
       if (confirmado) {
         this.clienteService.eliminarCliente(id).subscribe({
           next: (res: any) => {
-            console.log("Respuesta exitosa al eliminar:", res);
             
             // Mostramos la alerta flotante de éxito
-            this.alertasService.mostrarExito('¡Empleado eliminado!');
+            this.alertasService.mostrarExito('¡Cliente eliminado!');
             this.obtenerClientes();
           },
           error: (error) => {

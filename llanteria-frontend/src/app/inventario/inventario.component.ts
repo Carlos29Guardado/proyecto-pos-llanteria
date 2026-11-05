@@ -1,13 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { ProductoService } from '../services/producto.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './inventario.component.html',
   styleUrls: ['./inventario.component.css']
 })
@@ -57,7 +56,7 @@ export class InventarioComponent implements OnInit {
       this.productoService.actualizarProducto(this.productoActual._id, this.productoActual).subscribe({
         next: () => {
           // Usamos el servicio global para el éxito
-          this.alertasService.mostrarExito('!Producto actualizado!');
+          this.alertasService.mostrarExito('¡Producto actualizado!');
           this.obtenerProductos();
           this.limpiarFormulario();
         },
@@ -82,7 +81,7 @@ export class InventarioComponent implements OnInit {
       this.productoService.crearProducto(productoLimpio).subscribe({
         next: () => {
           // Usamos el servicio global para el éxito
-          this.alertasService.mostrarExito('Producto guardado!');
+          this.alertasService.mostrarExito('¡Producto guardado!');
           this.obtenerProductos();
           this.limpiarFormulario();
         },
@@ -109,7 +108,7 @@ export class InventarioComponent implements OnInit {
         this.productoService.eliminarProducto(id).subscribe({
           next: () => {
             // Mostramos la alerta flotante de éxito
-            this.alertasService.mostrarExito('Producto eliminado!');
+            this.alertasService.mostrarExito('¡Producto eliminado!');
             this.obtenerProductos();
           },
           error: (error) => {

@@ -1,24 +1,23 @@
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
+import { LoginService } from './services/login.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  const router = inject(Router);
+export const authGuard: CanActivateFn = () => {
+  // En el servidor no existe localStorage, la validación se hace en el navegador
+  if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
 
-  const platformId = inject(PLATFORM_ID);
+  const loginService = inject(LoginService);
+  if (loginService.sesionActiva()) return true;
 
-  // Verificamos si estamos en el navegador
-  if (isPlatformBrowser(platformId)) {
-    
-    // Si estamos en el navegador (Brave, Chrome), es seguro usar localStorage
-    const token = localStorage.getItem('token');
+  // Token inexistente o expirado: limpiamos y vamos al login
+  loginService.cerrarSesion();
+  return inject(Router).createUrlTree(['/login']);
+};
 
-    if (token) {
-      return true; // Pásale, tienes token
-    } else {
-      router.navigate(['/login']);
-      return false; // No tienes token, vas pal login
-    }
-  }
-  return true;
+// Solo los administradores pueden entrar (usar junto con authGuard)
+export const adminGuard: CanActivateFn = () => {
+  if (!isPlatformBrowser(inject(PLATFORM_ID))) return true;
+
+  return inject(LoginService).esAdmin() ? true : inject(Router).createUrlTree(['/inventario']);
 };
