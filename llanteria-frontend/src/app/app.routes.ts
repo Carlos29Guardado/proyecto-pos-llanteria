@@ -12,5 +12,6 @@ export const routes: Routes = [
   { path: 'clientes', component: ClienteComponent, canActivate: [authGuard]},
   {path: 'ventas', component: VentasComponent, canActivate: [authGuard]},
   {path: 'login', component: LoginComponent},
-  { path: '', redirectTo: '/login', pathMatch: 'full' } // Ruta por defecto
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Ruta por defecto
+  { path: '**', redirectTo: '/inventario' } // Rutas inexistentes
 ];

@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { UsuarioService } from '../services/usuario.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
@@ -49,7 +49,12 @@ export class Usuarios implements OnInit {
   }
 
   //MÉTODO PARA CREAR O ACTUALIZAR UN USUARIO
- guardarUsuario() {
+ guardarUsuario(formulario: NgForm) {
+    if (formulario.invalid) {
+      this.alertasService.mostrarError('Completa todos los campos correctamente');
+      return;
+    }
+
     // Si el usuario tiene un ID, significa que estamos EDITANDO
     if (this.usuarioActual._id) {
       const cambios: any = {
@@ -72,7 +77,7 @@ export class Usuarios implements OnInit {
         error: (err: any) => {
           console.error("Error al actualizar:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al actualizar el usuario en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al actualizar el usuario en la base de datos');
         }
       });
     } 
@@ -96,7 +101,7 @@ export class Usuarios implements OnInit {
         error: (err: any) => {
           console.error("Error al crear:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al guardar el usuario en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al guardar el usuario en la base de datos');
         }
       });
     }
@@ -123,7 +128,7 @@ eliminarUsuario(id: string) {
           error: (error) => {
             console.error("Error al eliminar:", error);
             // Mostramos alerta de error si algo falla en el backend
-            this.alertasService.mostrarError('Hubo un error al intentar eliminar al empleado');
+            this.alertasService.mostrarError(error.error?.mensaje || 'Hubo un error al intentar eliminar al empleado');
           }
         });
       }

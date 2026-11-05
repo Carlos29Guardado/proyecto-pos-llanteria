@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ClienteService } from '../services/cliente.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
@@ -49,7 +49,12 @@ export class ClienteComponent implements OnInit {
   }
 
   //MÉTODO PARA CREAR O ACTUALIZAR UN CLIENTE
-  guardarCliente() {
+  guardarCliente(formulario: NgForm) {
+    if (formulario.invalid) {
+      this.alertasService.mostrarError('Completa todos los campos correctamente');
+      return;
+    }
+
     // Si el usuario tiene un ID, significa que estamos EDITANDO
     if (this.clienteActual._id) {
       this.clienteService.actualizarCliente(this.clienteActual._id, this.clienteActual).subscribe({
@@ -62,7 +67,7 @@ export class ClienteComponent implements OnInit {
         error: (err: any) => {
           console.error("Error al actualizar:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al actualizar el cliente en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al actualizar el cliente en la base de datos');
         }
       });
     }
@@ -86,7 +91,7 @@ export class ClienteComponent implements OnInit {
         error: (err: any) => {
           console.error("Error al crear:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al guardar el cliente en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al guardar el cliente en la base de datos');
         }
       });
     }
@@ -113,7 +118,7 @@ export class ClienteComponent implements OnInit {
           error: (error) => {
             console.error("Error al eliminar:", error);
             // Mostramos alerta de error si algo falla en el backend
-            this.alertasService.mostrarError('Hubo un error al intentar eliminar el cliente');
+            this.alertasService.mostrarError(error.error?.mensaje || 'Hubo un error al intentar eliminar el cliente');
           }
         });
       }

@@ -12,7 +12,7 @@
       {{ productoActual._id ? 'Editar' : 'Registrar Nuevo' }} Producto
     </h4>
 
-    <form (ngSubmit)="guardarProducto()" style="display: flex; flex-direction: column; gap: 15px;">
+    <form #formulario="ngForm" (ngSubmit)="guardarProducto(formulario)" style="display: flex; flex-direction: column; gap: 15px;">
   
   <!-- Fila 1: Campos cortos -->
   <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
@@ -22,10 +22,10 @@
     <input type="text" name="marca" [(ngModel)]="productoActual.marca" placeholder="Marca" required
       style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
 
-    <input type="number" name="stock" [(ngModel)]="productoActual.stock" placeholder="Stock" required
+    <input type="number" name="stock" [(ngModel)]="productoActual.stock" placeholder="Stock" min="0" required
       style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
 
-    <input type="number" name="precio" [(ngModel)]="productoActual.precio" placeholder="Precio" required
+    <input type="number" name="precio" [(ngModel)]="productoActual.precio" placeholder="Precio" min="0" step="0.01" required
       style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
   </div>
 
@@ -34,7 +34,7 @@
     
     <!-- flex: 1 permite que la descripción tome todo el espacio sobrante -->
     <input type="text" name="descripcion" [(ngModel)]="productoActual.descripcion" placeholder="Descripción / Medida" required
-      style="flex: 1; min-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+      style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
 
     <!-- margin-left: auto empuja este bloque de botones hacia la derecha -->
     <div style="display: flex; gap: 10px; margin-left: auto;">
@@ -58,6 +58,7 @@
   </div>
 
   <!-- 2. Tabla de Productos -->
+  <div style="overflow-x: auto;">
   <table
     style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
     <thead>
@@ -92,4 +93,5 @@
       </tr>
     </tbody>
   </table>
+  </div>
 </div>

@@ -6,13 +6,22 @@
 
 
 <!-- 1. El Menú Lateral (Se queda igual) -->
+<header class="barra-movil">
+  <button type="button" class="btn-menu" aria-label="Abrir menú" (click)="alternarMenu()"><i class='bx bx-menu'></i></button>
+  <span>Llantería POS</span>
+</header>
+
+@if (menuAbierto) {
+  <div class="menu-fondo" (click)="alternarMenu()"></div>
+}
+
 <div class="menu-lateral" [class.abierto]="menuAbierto">
   <div class="menu-header">
     <h3>Menú Principal</h3>
     <!--<button class="btn-cerrar" (click)="alternarMenu()">×</button> -->
   </div>
 
-  <nav class="menu-links">
+  <nav class="menu-links" (click)="menuAbierto = false">
   <a routerLink="/inventario"><i class='bx bx-package'></i> Inventario</a>
   @if (esAdmin) {
   <a routerLink="/usuarios"><i class='bx bx-group'></i> Usuarios</a>
@@ -27,7 +36,7 @@
 <div class="contenido-principal" [class.desplazado]="menuAbierto">
 
   <!-- Aquí va tu componente de inventario -->
-  <div class="area-trabajo" style="padding: 20px;">
+  <div class="area-trabajo">
     <router-outlet></router-outlet>
 
   </div>

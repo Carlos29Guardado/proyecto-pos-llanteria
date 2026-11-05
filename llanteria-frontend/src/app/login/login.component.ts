@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
-import { filter, switchMap } from 'rxjs';
+import { catchError, EMPTY, filter, switchMap } from 'rxjs';
 import { LoginService } from '../services/login.service';
 import { AlertasService } from '../services/alertas.service';
 
@@ -37,15 +37,16 @@ export class LoginComponent {
     // Google nos entrega su idToken y el backend lo verifica para emitir nuestro JWT
     this.authService.authState.pipe(
       filter((usuarioGoogle: SocialUser | null): usuarioGoogle is SocialUser => !!usuarioGoogle?.idToken),
-      switchMap(usuarioGoogle => this.loginService.loginGoogle(usuarioGoogle.idToken)),
+      // El error se atrapa aquí adentro para que el usuario pueda volver a intentarlo
+      switchMap(usuarioGoogle => this.loginService.loginGoogle(usuarioGoogle.idToken).pipe(
+        catchError((error) => {
+          console.error('El backend rechazó el login con Google:', error);
+          this.alertaService.mostrarError('No se pudo iniciar sesión con Google');
+          return EMPTY;
+        })
+      )),
       takeUntilDestroyed()
-    ).subscribe({
-      next: (respuesta) => this.entrar(respuesta),
-      error: (error) => {
-        console.error('El backend rechazó el login con Google:', error);
-        this.alertaService.mostrarError('No se pudo iniciar sesión con Google');
-      }
-    });
+    ).subscribe((respuesta) => this.entrar(respuesta));
   }
 
   iniciarSesion() {

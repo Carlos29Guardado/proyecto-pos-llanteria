@@ -19,6 +19,8 @@ Sistema de punto de venta (POS) para una llantería: controla el inventario de l
 
 > Las credenciales ya vienen cargadas en el formulario: solo presiona **Entrar**. También puedes iniciar sesión con Google.
 >
+> La cuenta demo tiene rol `CAJERO`, por eso no muestra la sección Usuarios, que es exclusiva de `ADMIN`.
+>
 > ⏳ El backend está en el plan gratuito de Render, así que la primera petición puede tardar unos 30–50 segundos mientras el servidor despierta.
 
 ## ✨ Funcionalidades

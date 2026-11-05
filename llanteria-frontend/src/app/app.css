@@ -73,3 +73,66 @@
 .btn-logout:hover {
   background-color: #fee2e2;
 }
+.area-trabajo {
+  padding: 20px;
+}
+
+/* Barra superior y fondo del menú: solo existen en pantallas angostas */
+.barra-movil,
+.menu-fondo {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .barra-movil {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #212529;
+    color: white;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-weight: 600;
+  }
+
+  .btn-menu {
+    display: inline-flex;
+    padding: 6px;
+    border: none;
+    background: none;
+    color: white;
+    font-size: 26px;
+    cursor: pointer;
+  }
+
+  .menu-fondo {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .menu-lateral {
+    transform: translateX(-100%);
+    box-shadow: none;
+    transition: transform 0.2s ease;
+  }
+
+  .menu-lateral.abierto {
+    transform: none;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+  }
+
+  .contenido-principal {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .area-trabajo {
+    padding: 8px;
+  }
+}

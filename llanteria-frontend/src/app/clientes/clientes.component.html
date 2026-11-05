@@ -12,7 +12,7 @@
       {{ clienteActual._id ? 'Editar' : 'Registrar Nuevo' }} Cliente
     </h4>
 
-    <form (ngSubmit)="guardarCliente()" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <form #formulario="ngForm" (ngSubmit)="guardarCliente(formulario)" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
 
 
       <input type="text" name="nombre" [(ngModel)]="clienteActual.nombre" placeholder="Nombre" required
@@ -44,6 +44,7 @@
   </div>
 
   <!-- 2. Tabla de Usuarios -->
+  <div style="overflow-x: auto;">
   <table
     style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
     <thead>
@@ -76,4 +77,5 @@
       </tr>
     </tbody>
   </table>
+  </div>
 </div>

@@ -31,6 +31,7 @@ export class AppComponent {
   }
 
   cerrarSesion(){
+    this.menuAbierto = false;
     this.loginService.cerrarSesion();
     // Si entró con Google también cerramos esa sesión (falla si no la había, por eso se ignora)
     this.socialAuthService.signOut().catch(() => {});

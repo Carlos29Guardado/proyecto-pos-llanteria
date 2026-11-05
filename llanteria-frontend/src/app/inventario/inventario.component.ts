@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ProductoService } from '../services/producto.service';
 import { AlertasService } from '../services/alertas.service';
 @Component({
@@ -50,7 +50,12 @@ export class InventarioComponent implements OnInit {
   }
 
   //MÉTODO PARA CREAR O ACTUALIZAR
-  guardarProducto() {
+  guardarProducto(formulario: NgForm) {
+    if (formulario.invalid) {
+      this.alertasService.mostrarError('Completa todos los campos correctamente');
+      return;
+    }
+
     // Si el prducto tiene un ID, significa que estamos EDITANDO
     if (this.productoActual._id) {
       this.productoService.actualizarProducto(this.productoActual._id, this.productoActual).subscribe({
@@ -63,7 +68,7 @@ export class InventarioComponent implements OnInit {
         error: (err: any) => {
           console.error("Error al actualizar:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al actualizar el producto en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al actualizar el producto en la base de datos');
         }
       });
     }
@@ -88,7 +93,7 @@ export class InventarioComponent implements OnInit {
         error: (err: any) => {
           console.error("Error al crear:", err);
           // Usamos el servicio global para el error
-          this.alertasService.mostrarError('Error al guardar el producto en la base de datos');
+          this.alertasService.mostrarError(err.error?.mensaje || 'Error al guardar el producto en la base de datos');
         }
       });
     }
@@ -114,7 +119,7 @@ export class InventarioComponent implements OnInit {
           error: (error) => {
             console.error("Error al eliminar:", error);
             // Mostramos alerta de error si algo falla en el backend
-            this.alertasService.mostrarError('Hubo un error al intentar eliminar');
+            this.alertasService.mostrarError(error.error?.mensaje || 'Hubo un error al intentar eliminar');
           }
         });
       }
